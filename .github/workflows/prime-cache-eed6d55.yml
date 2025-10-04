@@ -1,50 +1,35 @@
-# File: .github/workflows/combined-tasks.yml
+# File: .github/workflows/caching.yml
 
-name: Combined Verification and Caching Tasks
+name: CI with Dependency Caching
 
-# Define the trigger (runs on every push to the main branch)
+# Runs on every push to the main branch
 on:
   push:
     branches:
       - main
 
-# -----------------------------------------------------
-# JOB 1: Email Verification Job (Fulfills Requirement 1)
-# -----------------------------------------------------
 jobs:
-  email_verification_job:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # REQUIRED: Step with the email address in the name
-      - name: 23f2002898@ds.study.iitm.ac.in
-        run: echo "Verifying required step name for task 1."
-
-# -----------------------------------------------------
-# JOB 2: Caching Job (Fulfills Requirement 2)
-# -----------------------------------------------------
-  caching_and_check_job:
+  build_with_cache:
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # REQUIRED: Step to prime the cache with key 'cache-eed60d55'
+      # 1. REQUIRED: Step to prime the cache with key 'cache-eed60d55'
       - name: prime-cache-eed60d55
-        uses: actions/cache@v4 # Use v4 (or v3 as specified)
-        id: cache-step # Give it an ID to reference its output
+        uses: actions/cache@v4 # Uses actions/cache@v3 or newer
+        id: cache-step # Required to check the output below
         with:
+          # REQUIRED: The cache key
           key: cache-eed60d55
-          path: ~/.npm # Cache a common path like npm dependencies
+          # Path to cache (example: npm dependencies)
+          path: ~/.npm
 
-      # REQUIRED: Step to echo the cache hit/miss result
+      # 2. REQUIRED: Step that echoes the cache hit/miss result
       - name: Echo Cache Result
         run: |
-          # The actions/cache step sets an output variable 'cache-hit'.
+          # The logic checks the output variable 'cache-hit' from the previous step ('cache-step')
           if [ "${{ steps.cache-step.outputs.cache-hit }}" == "true" ]; then
             echo "Cache Status: HIT 🎉"
           else
