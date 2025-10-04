@@ -17,12 +17,12 @@ jobs:
         uses: actions/checkout@v4
 
       # 1. REQUIRED: Step to prime the cache with key 'cache-eed60d55'
-      - name: prime-cache-eed60d55
+      - name: prime-cache-eed6d55
         uses: actions/cache@v4 # Uses actions/cache@v3 or newer
         id: cache-step # Required to check the output below
         with:
           # REQUIRED: The cache key
-          key: cache-eed60d55
+          key: cache-eed6d55
           # Path to cache (example: npm dependencies)
           path: ~/.npm
 
