@@ -1,37 +1,27 @@
-# File: .github/workflows/caching.yml
+name: Dependency Cache
 
-name: CI with Dependency Caching
-
-# Runs on every push to the main branch
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
-  build_with_cache:
+  build:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      # 1. REQUIRED: Step to prime the cache with key 'cache-eed60d55'
-      - name: prime-cache-eed6d55
-        uses: actions/cache@v4 # Uses actions/cache@v3 or newer
-        id: cache-step # Required to check the output below
-        with:
-          # REQUIRED: The cache key
-          key: cache-eed6d55
-          # Path to cache (example: npm dependencies)
-          path: ~/.npm
+    - name: prime-cache-eed6d55
+      id: cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/pip
+          # Add your dependency directory here (e.g. node_modules, .m2 for Maven, etc.)
+        key: cache-eed6d55
 
-      # 2. REQUIRED: Step that echoes the cache hit/miss result
-      - name: Echo Cache Result
-        run: |
-          # The logic checks the output variable 'cache-hit' from the previous step ('cache-step')
-          if [ "${{ steps.cache-step.outputs.cache-hit }}" == "true" ]; then
-            echo "Cache Status: HIT 🎉"
-          else
-            echo "Cache Status: MISS 💔 (Priming cache...)"
-          fi
+    - name: Echo cache hit/miss
+      run: echo "Cache result:${{ steps.cache.outputs.cache-hit }}"
